@@ -1,0 +1,554 @@
+#include "uvsqgraphics.h"
+
+struct raquette
+{
+		POINT a , b;
+		int c;
+		COULEUR coul;
+		
+};
+	
+typedef struct raquette RAQUETTE;
+
+int h = 3;
+int j = 3;
+int d = 0;
+POINT plafonda , plafondb;
+RAQUETTE r;
+
+
+RAQUETTE init_raquette(RAQUETTE r)
+{
+	r.a.x = 500; r.a.y = 100; r.b.x = r.a.x + 200; r.b.y = r.a.y +20;
+	return r;
+	
+}
+
+void affiche_raquette()
+{
+	
+	
+	r.coul = bleu;
+	draw_fill_rectangle(r.a , r.b, r.coul);
+	
+	
+		
+}
+
+void efface_raquette()
+{
+
+	r.coul = black;
+	
+	draw_fill_rectangle(r.a , r.b, r.coul);
+	
+	
+		
+}
+
+RAQUETTE deplace_raquette(RAQUETTE r, int dx )
+{
+	
+	
+	
+	POINT p = get_arrow();
+	r.a.x = r.a.x + dx*p.x ; 
+	r.b.x = r.b.x + dx*p.x ; 
+	
+	if(r.a.x < 1)
+	{
+			r.a.x = r.a.x + -dx*p.x ;
+			r.b.x = r.b.x + -dx*p.x ;
+	}
+	if(r.b.x > 900)
+	{
+			r.a.x =  r.a.x + -dx*p.x ;
+			r.b.x = r.b.x + -dx*p.x;
+	}
+	
+
+	
+	
+	return  r;
+}
+
+struct balle 
+{
+POINT centre;
+int rayon; 
+COULEUR coul;
+int dx,dy;
+	
+};
+
+
+
+typedef struct balle BALLE;
+
+BALLE b[4];
+
+BALLE init_balle()
+{
+	BALLE a;
+	
+	a.centre.x = alea_int(899); a.centre.y = 200 + alea_int(400);
+	a.coul = couleur_RGB(alea_int(255),alea_int(255),alea_int(255));
+	a.rayon = 15;
+ a.dx = 2; a.dy = 2; 
+  
+ 	return a;
+}
+
+
+BALLE deplace_balle(BALLE b)
+{
+		
+		b.centre.x = b.centre.x + (b.dx )  ;
+		b.centre.y = b.centre.y + (b.dy ) ;
+		
+		return b;
+		
+}
+
+void efface_balle(BALLE b)
+{
+			b.coul = black;
+				draw_fill_circle(b.centre,b.rayon,b.coul);
+}
+
+void affiche_balle(BALLE b)
+{
+			
+				draw_fill_circle(b.centre,b.rayon,b.coul);
+}
+
+
+int CHOC(BALLE b, RAQUETTE r)
+{
+		if( (b.centre.y < r.b.y + 10 && b.centre.y > r.b.y) && (b.centre.x > r.a.x && b.centre.x < r.b.x) )
+		{
+			
+				return 1;
+		}	
+		else
+		{
+			return 0;
+		}
+		
+}
+void affiche_vie()
+{
+	
+	POINT p,g; 
+	p.x = 10; p.y = 880;
+	//
+	char *a = "vie: ";
+	aff_pol(a,30,p,red);
+	g.x = 70; g.y = 880;
+	aff_int(h, 30, g,red);
+	
+	
+		
+		
+}
+void efface_vie()
+{
+	
+	POINT p,g;
+	p.x = 0; p.y = 775;
+	g.x = 100; g.y = 900;
+	draw_fill_rectangle(p,g,black);
+	
+	
+		
+		
+}
+
+int vie(int h,BALLE b)
+{
+			
+		if( b.centre.y < b.rayon)
+		{
+			
+				h = h-1;
+				
+
+				return h;
+				
+		}
+		
+		return h;
+		
+		
+}
+
+BALLE rebond_balle(BALLE b,POINT plafonda)
+{
+	int g;
+	g = CHOC(b , r);
+	
+		if( b.centre.x > 900-  b.rayon )
+		{
+				b.dx = -1;
+				b.dx = b.dx -1;
+				
+		}
+		if( b.centre.x < b.rayon )
+		{
+				b.dx = 1;
+				b.dx = b.dx + 1;
+		}
+		if( b.centre.y > (plafonda.y - b.rayon) )
+		{
+				b.dy = -1;
+				b.dy = b.dy -1;
+		}
+		if( b.centre.y < b.rayon  )
+		{
+				b.dy = 1;
+				
+		}
+		if( g == 1)
+		 {
+			 b.dy = 1;
+			 b.dy = b.dy +1;
+		 }
+		 
+		
+		return b;
+}
+
+
+BALLE replace_balle(int j, int h,BALLE b)
+{
+		
+		
+			
+			b = init_balle();
+			
+			return b;
+			
+			
+		
+	
+}
+
+void affiche_vie_perdu()
+{
+		char *perdu = "vous avez perdu une vie !";
+		POINT perduu;
+		 perduu.x = 220; perduu.y = 450;
+		aff_pol(perdu,40,perduu,red);
+		
+}
+void efface_vie_perdu()
+{
+		
+		POINT f,k;
+		 f.x = 210; f.y = 300;
+		 k.x = 800; k.y = 500;
+		 draw_fill_rectangle(f,k,black);
+		
+		
+}
+
+void affiche_point(int d)
+{
+	
+	POINT p,g; 
+	p.x = 10; p.y = 850;
+	//
+	char *a = "point ";
+	aff_pol(a,30,p,red);
+	g.x = 90; g.y = 850;
+	aff_int(d, 30, g,red);
+	
+		
+		
+}
+//compteur du nombre de points
+int pts(int d,BALLE b,RAQUETTE r)
+{
+	int z = CHOC(b,r);
+	if( (z == 1 ))
+		{
+			
+				d = d+1;
+				
+
+				return d;
+				
+		}
+		
+		return d;
+		
+	
+}
+void efface_pts()
+{
+		
+		POINT f,k;
+		 f.x = 5; f.y = 800;
+		 k.x = 150; k.y = 845;
+		 draw_fill_rectangle(f,k,black);
+		
+		
+}
+
+void affiche_fin_jeu(int d)
+{
+		POINT p;
+		p.x = 250; p.y = 450;
+		fill_screen(black);
+		char *a = "Vous avez perdu ! votre score :  ";
+	   aff_pol(a,30,p,red);
+	   p.x = 730; p.y = 450;
+	   aff_int(d, 30, p,red);
+	   
+		
+}
+//A chaque rebond la raquette se réduit
+RAQUETTE reduire_raquette(RAQUETTE r,BALLE b)
+{
+	
+	int z = CHOC(b,r);
+	
+	if(z == 1 && (r.b.x - r.a.x) > 70 )
+	{
+			r.a.x = r.a.x +2;
+			r.b.x = r.b.x -2;
+			
+			return r;
+	}
+	
+	return r;
+	
+}
+//A chaque rebond le rayon de la balle diminue
+BALLE reduire_balle(RAQUETTE r,BALLE b)
+{
+	
+	int z = CHOC(b,r);
+	
+	if(z == 1  && b.rayon > 7)
+	{
+			b.rayon = b.rayon - 1;
+			
+			return b;
+	}
+	
+	return b;
+	
+}
+//A chaque rebond le plafond descend
+int reduire_plafond(RAQUETTE r,BALLE b, POINT plafonda)
+{
+	
+	
+	int z = CHOC(b,r);
+	
+	if(z == 1 && plafonda.y > 500 )
+	{
+			plafonda.y = plafonda.y - 10;
+			
+			return plafonda.y ;
+	}
+	
+	return plafonda.y ;
+	
+}
+//A chaque rebond la balle accelere
+BALLE accelere_balle(RAQUETTE r, BALLE b)
+{
+	int z = CHOC(b,r);
+	
+	if(z == 1 )
+	{
+			b.dx = b.dx +2;
+			b.dy = b.dy +2;
+			
+			return b;
+	}
+	
+	return b;
+}
+
+
+
+int main()
+{
+init_graphics(900,900);
+r = init_raquette(r);
+plafonda.x = 0; plafondb.x = 900;
+plafonda.y = 900; plafondb.y = plafonda.y ;
+int dx = 4;
+int i;
+	for(i = 0; i<4; i++)
+	{
+		b[i] = init_balle();
+	}
+	
+	b[3].centre.y = 600 + alea_int(100);
+
+affiche_point(d);
+affiche_balle(b[1]);
+affiche_raquette(r);
+affiche_vie();
+//attend 1 seconde avant de commencer
+attendre(1000);
+
+affiche_auto_off();
+
+		while(1)
+		{
+			dx = 4;
+			efface_vie();
+			efface_pts();
+			affiche_vie();
+			affiche_point(d);
+			draw_line(plafonda,plafondb,bleu);
+			
+			affiche_balle(b[1]);
+			//vie perdu
+			if(h == j-1)
+			{
+				    
+				    efface_balle(b[1]);
+				    efface_raquette(r);
+				    plafonda.x = 0; plafondb.x = 900;
+					plafonda.y = 900; plafondb.y = plafonda.y ;
+					fill_screen(black);
+					affiche_vie_perdu();
+				    d = 0;
+				    //fin du jeu
+				     if(h == 0)
+				     {
+						 fill_screen(black);
+						 affiche_fin_jeu(d);
+						 affiche_all();
+						 wait_clic();
+						 exit(0);
+					 }
+					b[1] = replace_balle(j,h,b[1]);
+					r = init_raquette(r);
+					affiche_all();
+					attendre(1000);
+					efface_vie_perdu();
+
+					
+					j = j-1;
+					
+					
+			}
+			
+			affiche_raquette(r);
+			
+			affiche_all();
+			draw_line(plafonda,plafondb,black);
+			efface_raquette(r);
+			efface_balle(b[1]);
+			r = reduire_raquette(r,b[1]);
+			b[1] = reduire_balle(r,b[1]);
+			
+			r = deplace_raquette(r,dx);
+			plafonda.y = reduire_plafond(r,b[1],plafonda);
+			plafondb.y = plafonda.y ;
+			
+			
+			b[1] =deplace_balle(b[1]);
+			h = vie(h,b[1]);
+			d = pts(d,b[1],r);
+			while( d == 10)
+			{
+					h = h+1;
+					j=h;
+					d = d+1;
+					break;
+					
+			}
+			  
+			attendre(1);
+			
+			b[1] = rebond_balle(b[1],plafonda);
+			
+							//ZONE 3 balles-----------------------------------
+							while( d >19)
+							{
+								
+								//option supplementaire raquette se deplace plus vite au bout de 20 pts
+								dx = 5;
+								efface_vie();
+								efface_pts();
+								affiche_vie();
+								affiche_point(d);
+								draw_line(plafonda,plafondb,bleu);
+								for(int j = 1; j<4; j++)
+									{
+										affiche_balle(b[j]);
+									
+									}
+									//vie perdu
+									if(h == j-1)
+									{
+										
+										 for(int j = 1; j<4; j++)
+										{
+										efface_balle(b[j]);
+										}
+									plafonda.x = 0; plafondb.x = 900;
+									plafonda.y = 900; plafondb.y = plafonda.y ;
+									draw_line(plafonda,plafondb,black);
+									fill_screen(black);
+									affiche_vie_perdu();
+										efface_raquette(r);
+										d = 0;
+											//fin du jeu
+											if(h == 0)
+											{	
+												fill_screen(black);
+												affiche_fin_jeu(d);
+												affiche_all();
+												wait_escape();
+												exit(0);
+											}
+										b[1] = replace_balle(j,h,b[1]);
+										r = init_raquette(r);
+										affiche_all();
+										attendre(1000);
+										efface_vie_perdu();
+										j = j-1;
+					
+					
+									}
+										
+			
+											affiche_raquette(r);
+			
+												affiche_all();
+			
+												efface_raquette(r);
+													for(int j = 1; j<4; j++)
+													{
+														efface_balle(b[j]);
+														r = reduire_raquette(r,b[j]);
+														b[j] = reduire_balle(r,b[j]);
+														r = deplace_raquette(r,dx);
+														plafonda.y = reduire_plafond(r,b[j],plafonda);
+														plafondb.y = plafonda.y ;
+														b[j] =deplace_balle(b[j]);
+														d = pts(d,b[j],r);
+														h = vie(h,b[j]);
+												
+												
+														b[j] = rebond_balle(b[j],plafonda);
+													}
+								
+								attendre(1);
+								
+							}
+			
+		}
+
+wait_escape();
+exit(0);
+}
